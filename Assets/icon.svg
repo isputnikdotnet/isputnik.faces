@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">isputnik.home app icon</title>
+  <desc id="desc">A flat rounded square: an outlined house with a teal door, a teal orbit passing through its walls, and an orange satellite on the orbit.</desc>
+  <defs>
+    <!-- Lower half of the orbit (along its major axis) is drawn again on top of the house. -->
+    <clipPath id="orbit-front">
+      <rect x="-200" y="240" width="900" height="500" transform="rotate(-24 250 240)"/>
+    </clipPath>
+  </defs>
+
+  <rect width="512" height="512" rx="108" fill="#16213a"/>
+
+  <!-- orbit, behind the house -->
+  <ellipse cx="250" cy="240" rx="222" ry="80" fill="none" stroke="#5fb8b0" stroke-width="22" transform="rotate(-24 250 240)"/>
+
+  <!-- house: solid interior so the orbit disappears behind it, then the outline -->
+  <path d="M256 133 384 261H342V376H172V261H128Z" fill="#16213a"/>
+  <path d="M172 236v116a24 24 0 0 0 24 24h120a24 24 0 0 0 24-24V236" fill="none" stroke="#f1f3ee" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M128 261 256 133l128 128" fill="none" stroke="#f1f3ee" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M234 376V318a22 22 0 0 1 44 0v58Z" fill="#5fb8b0"/>
+
+  <!-- orbit, in front of the walls -->
+  <ellipse cx="250" cy="240" rx="222" ry="80" fill="none" stroke="#5fb8b0" stroke-width="22" transform="rotate(-24 250 240)" clip-path="url(#orbit-front)"/>
+
+  <!-- satellite; the navy stroke breaks the orbit around it -->
+  <circle cx="397.5" cy="124.1" r="32" fill="#e9a95f" stroke="#16213a" stroke-width="16"/>
+</svg>

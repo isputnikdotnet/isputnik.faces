@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<!--
+  Unraid Community Applications template for isputnik.faces — a DEPLOYMENT
+  artifact (the container's install manifest), not source code. DO NOT DELETE.
+  The <Icon> below is a raw.githubusercontent URL to Assets/ on the main branch,
+  so the repo-root Assets/ folder must stay too.
+
+  The faces container publishes no port on purpose: only the isputnik.home
+  container talks to it, by name, over a user-defined Docker network. See README.md.
+-->
+<Container version="2">
+  <Name>isputnik-faces</Name>
+  <Repository>ghcr.io/isputnikdotnet/isputnik.faces:latest</Repository>
+  <Registry>https://ghcr.io/isputnikdotnet/isputnik.faces</Registry>
+  <!-- Pick the same user-defined network as the isputnik container (create it
+       once: `docker network create isputnik`). On Docker's default bridge the
+       containers cannot reach each other by name. -->
+  <Network>isputnik</Network>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <!-- The health check (GET /faces/api/health) is built into the image. -->
+  <ExtraParams>--stop-timeout=30</ExtraParams>
+  <Support>https://github.com/isputnikdotnet/isputnik.faces/issues</Support>
+  <Project>https://github.com/isputnikdotnet/isputnik.faces</Project>
+
+  <Overview>
+The face engine for isputnik.home: finds the faces in the family's photos and describes each one, so isputnik.home can group them into people. Everything stays on your server. Alpha.
+
+This container has no sign-in, no web address and no data of its own: isputnik.home sends it photos and keeps every face, name and person itself. Set up: put both containers on one user-defined Docker network (docker network create isputnik); in isputnik.home open Control panel, Settings, Apps, choose Faces, enter http://isputnik-faces:4400 as the address, press Generate secret and paste it here as Gateway Secret. Face recognition is switched on per photo library under Control panel, Library, Libraries.
+  </Overview>
+
+  <Category>MediaServer:Photos Tools:</Category>
+
+  <!-- No <WebUI>: the engine has no pages. -->
+
+  <TemplateURL>https://raw.githubusercontent.com/isputnikdotnet/isputnik.faces/main/isputnik-faces.xml</TemplateURL>
+
+  <Icon>https://raw.githubusercontent.com/isputnikdotnet/isputnik.faces/main/Assets/icon.png</Icon>
+
+  <!-- Environment Variables -->
+
+  <Config Name="Gateway Secret"
+          Target="GATEWAY_SECRET"
+          Default=""
+          Mode=""
+          Description="The secret made in isputnik.home under Control panel, Settings, Apps, Faces (Generate secret, then Copy), or a long random string of at least 32 characters (openssl rand -hex 32) also set on the isputnik container as FACES_GATEWAY_SECRET. Every request the home server sends carries it. Required: the server refuses to start without it, or with a short one."
+          Type="Variable"
+          Display="always"
+          Required="true"
+          Mask="true"></Config>
+
+  <Config Name="CPU threads"
+          Target="ORT_THREADS"
+          Default=""
+          Mode=""
+          Description="How many CPU threads a scan may use. Left empty, all cores but one, so the box stays responsive while a scan runs; set 1 to throttle hardest, or a higher number to finish sooner. A CPU limit on the container works too."
+          Type="Variable"
+          Display="advanced"
+          Required="false"
+          Mask="false"></Config>
+
+  <Config Name="Load models on start"
+          Target="WARM"
+          Default="0"
+          Mode=""
+          Description="1 loads the models (about 200 MB of memory) when the container starts rather than at the first photo, so the first scan of the night does not wait on it."
+          Type="Variable"
+          Display="advanced"
+          Required="false"
+          Mask="false">0</Config>
+
+  <Config Name="PUID"
+          Target="PUID"
+          Default="99"
+          Mode=""
+          Description="User ID the server runs as. It runs unprivileged (not root) and writes nothing, so any user will do; 99 (nobody) matches the other isputnik containers."
+          Type="Variable"
+          Display="advanced"
+          Required="false"
+          Mask="false">99</Config>
+
+  <Config Name="PGID"
+          Target="PGID"
+          Default="100"
+          Mode=""
+          Description="Group ID the server runs as."
+          Type="Variable"
+          Display="advanced"
+          Required="false"
+          Mask="false">100</Config>
+
+  <Config Name="Log Level"
+          Target="LOG_LEVEL"
+          Default="info"
+          Mode=""
+          Description="trace, debug, info, warn, error, fatal or silent. The isputnik container shows this log under Control panel, Overview, Logs."
+          Type="Variable"
+          Display="advanced"
+          Required="false"
+          Mask="false">info</Config>
+
+</Container>

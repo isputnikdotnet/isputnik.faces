@@ -1,0 +1,39 @@
+{
+  "name": "isputnik-faces",
+  "private": true,
+  "version": "0.1.0",
+  "stage": "alpha",
+  "description": "The face engine for isputnik.home: finds the faces in a photo and describes each one, behind the home server. Keeps nothing.",
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "cross-env PORT=4400 tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "fetch:face-model": "node scripts/fetch-face-model.mjs"
+  },
+  "dependencies": {
+    "fastify": "^5.12.7",
+    "onnxruntime-node": "^1.30.0",
+    "sharp": "^0.35.5",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.6.5",
+    "cross-env": "^10.1.0",
+    "eslint": "^10.12.0",
+    "globals": "^17.13.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.71.2",
+    "vitest": "^5.0.5"
+  }
+}

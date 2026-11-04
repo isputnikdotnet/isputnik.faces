@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.env
+.env.local
+.claude
+
+# The 167 MB recogniser is fetched, not carried (scripts/fetch-face-model.mjs);
+# the 2.5 MB detector beside it stays in git.
+models/face/w600k_r50.onnx
