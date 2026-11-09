@@ -1,10 +1,11 @@
 # isputnik.faces
 
-The face engine for [isputnik.home](https://github.com/isputnikdotnet/isputnik.home):
-it finds the faces in a photo and describes each one, behind the home server,
-which keeps every face, name and person and draws every screen. This server
-has no pages and **no data**: a photo goes in, its faces come out, nothing is
-remembered.
+**An add-on for [isputnik.home](https://github.com/isputnikdotnet/isputnik.home):**
+its face recognition engine. It finds the faces in a photo and describes each
+one, behind the home server, which keeps every face, name and person and draws
+every screen. It requires the isputnik.home container, is installed beside it
+and is reached only through home's `/faces` gateway; this server has no pages
+and **no data**: a photo goes in, its faces come out, nothing is remembered.
 
 Why it is a container of its own: the ONNX runtime and the two InsightFace
 models are ~450 MB that change about never, and home releases every few days.
@@ -40,8 +41,17 @@ docker run -d --name isputnik-faces --network isputnik \
 ```
 
 Then in isputnik.home: Control panel → Settings › Apps → Faces, address
-`http://isputnik-faces:4400`, paste the same secret. On Unraid, `isputnik-faces.xml`
-is the Community Applications template.
+`http://isputnik-faces:4400` (or `http://<host IP>:4400` with the port published,
+`http://<its IP>:4400` on br0 with a fixed IP), paste the same secret, **Test
+connection**. The image is `ghcr.io/isputnikdotnet/isputnik.faces` and, the same
+bytes, `isputnikdotnet/isputnik.faces` on Docker Hub; every release tag publishes
+both.
+
+**Unraid** — the repository carries a Community Applications template,
+[`isputnik-faces.xml`](isputnik-faces.xml), listed in CA as **isputnik-faces**. It
+publishes port 4400 on `bridge` (safe: without the secret every request is
+answered 401), mounts nothing, and asks for the gateway secret, which is made in
+home first because the field is required.
 
 | Variable | Default | What |
 |---|---|---|

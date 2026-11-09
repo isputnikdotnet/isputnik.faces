@@ -1,41 +1,73 @@
 <?xml version="1.0"?>
 <!--
-  Unraid Community Applications template for isputnik.faces — a DEPLOYMENT
+  Unraid Community Applications template for isputnik.faces - a DEPLOYMENT
   artifact (the container's install manifest), not source code. DO NOT DELETE.
-  The <Icon> below is a raw.githubusercontent URL to Assets/ on the main branch,
-  so the repo-root Assets/ folder must stay too.
+  The <Icon> below is a raw.githubusercontent URL to Assets/brand/ on the main
+  branch, so the repo-root Assets/ folder must stay too.
 
-  The faces container publishes no port on purpose: only the isputnik.home
-  container talks to it, by name, over a user-defined Docker network. See README.md.
+  Faces is an add-on: it has no sign-in, no pages and no data of its own. The
+  isputnik (isputnik.home) container sends it photos and keeps every face, name
+  and person itself. Without the shared secret the engine answers everyone 401,
+  so publishing its port on the LAN gives nothing away. How the two find each
+  other is set in isputnik.home, on Control panel, Settings, Apps.
+  The Date and Changes block below is written by `npm run changelog` from
+  changelog.json; edit that file, not the block.
 -->
 <Container version="2">
   <Name>isputnik-faces</Name>
   <Repository>ghcr.io/isputnikdotnet/isputnik.faces:latest</Repository>
   <Registry>https://ghcr.io/isputnikdotnet/isputnik.faces</Registry>
-  <!-- Pick the same user-defined network as the isputnik container (create it
-       once: `docker network create isputnik`). On Docker's default bridge the
-       containers cannot reach each other by name. -->
-  <Network>isputnik</Network>
+  <!-- bridge with port 4400 published works everywhere: isputnik.home reaches
+       the engine at http://[unraid IP]:4400. On a user-defined network the two
+       containers also see each other by name (http://isputnik-faces:4400), and
+       on br0 with a fixed IP at http://[that IP]:4400 - the port mapping then
+       does nothing and may be left as it is. -->
+  <Network>bridge</Network>
   <Shell>sh</Shell>
   <Privileged>false</Privileged>
-  <!-- The health check (GET /faces/api/health) is built into the image. -->
+  <!-- Room for an orderly shutdown on update/stop. The health check
+       (GET /faces/api/health) is built into the image. -->
   <ExtraParams>--stop-timeout=30</ExtraParams>
   <Support>https://github.com/isputnikdotnet/isputnik.faces/issues</Support>
   <Project>https://github.com/isputnikdotnet/isputnik.faces</Project>
 
   <Overview>
-The face engine for isputnik.home: finds the faces in the family's photos and describes each one, so isputnik.home can group them into people. Everything stays on your server. Alpha.
+The face recognition engine for isputnik.home, in a container of its own: it finds the faces in the family's photos and describes each one, so isputnik.home can group them into people, name them and share photos by who is in them. Everything stays on your server, and the engine itself keeps nothing: a photo goes in, its faces come out. Runs on the CPU, with all cores but one so the server stays responsive during a scan.
 
-This container has no sign-in, no web address and no data of its own: isputnik.home sends it photos and keeps every face, name and person itself. Set up: put both containers on one user-defined Docker network (docker network create isputnik); in isputnik.home open Control panel, Settings, Apps, choose Faces, enter http://isputnik-faces:4400 as the address, press Generate secret and paste it here as Gateway Secret. Face recognition is switched on per photo library under Control panel, Library, Libraries.
+This is an add-on for isputnik.home and does nothing on its own: it has no sign-in, no pages and no data. Install it beside the isputnik container. Set it up from isputnik.home, on Control panel, Settings, Apps, Faces. Before installing, press Generate secret there and copy it (it is shown once); paste it into the Gateway Secret field below, which is required. Once the container runs, enter its address on the same page (http://[your Unraid IP]:4400 as installed here) and press Test connection, which then says Paired. Face recognition is then switched on per photo library under Control panel, Library, Libraries; the next scan uses it, and nothing is scanned twice. Needs isputnik.home 4.65.1 or newer.
   </Overview>
+
+  <Date>1794225600</Date>
+  <Changes>
+### 2026.11.09 — 0.1.1 On Docker Hub, and ready for Unraid Community Applications
+- **The image is on Docker Hub too, as isputnikdotnet/isputnik.faces.** Every release tag publishes the same image to ghcr.io and to Docker Hub, as isputnik.home's does, and the Docker Hub page shows this README under a description that says what the container is: an add-on for isputnik.home. Every public description now says so: the GitHub repository, the image, the Unraid template and its profile.
+- **Ready for Unraid Community Applications as isputnik-faces.** The template now publishes port 4400 on the ordinary bridge network, so isputnik.home reaches the engine at the server's own address with nothing to create first; a shared Docker network or br0 with a fixed IP work as before. It sends the administrator to isputnik.home's Control panel → Settings → Apps for the pairing, where the secret is generated first and pasted into Gateway Secret, and it carries this change log, regenerated by `npm run changelog` on every release.
+
+### 2026.11.03 — 0.1.0 The face engine: detection, embeddings and crops behind isputnik.home
+- **The first release.** InsightFace detection and embeddings on the ONNX runtime, behind isputnik.home's gateway: a photo goes in, its faces, descriptors and crops come out, and nothing is kept. Since isputnik.home 4.65.1 this container is where face recognition lives; home's own image carries no models.
+  </Changes>
+
+  <Requires>Needs the isputnik (isputnik.home) container, version 4.65.1 or newer, installed on the same server. The engine is reached only through it.</Requires>
 
   <Category>MediaServer:Photos Tools:</Category>
 
-  <!-- No <WebUI>: the engine has no pages. -->
+  <!-- No <WebUI>: the engine has no pages. Its port answers 401 to a browser. -->
 
   <TemplateURL>https://raw.githubusercontent.com/isputnikdotnet/isputnik.faces/main/isputnik-faces.xml</TemplateURL>
 
-  <Icon>https://raw.githubusercontent.com/isputnikdotnet/isputnik.faces/main/Assets/icon.png</Icon>
+  <Icon>https://raw.githubusercontent.com/isputnikdotnet/isputnik.faces/main/Assets/brand/isputnik-faces-icon.png</Icon>
+
+  <!-- Port -->
+
+  <Config Name="Engine Port"
+          Target="4400"
+          Default="4400"
+          Mode="tcp"
+          Description="The port the isputnik container reaches the engine on: enter http://[your Unraid IP]:[this port] as the Faces address in isputnik.home (Control panel, Settings, Apps). Not for browsers: the engine has no pages. On br0 with a fixed IP, or on a user-defined network shared with the isputnik container, this mapping is not used and the address is the container's own IP or name with port 4400."
+          Type="Port"
+          Display="always"
+          Required="true"
+          Mask="false">4400</Config>
 
   <!-- Environment Variables -->
 
@@ -43,7 +75,7 @@ This container has no sign-in, no web address and no data of its own: isputnik.h
           Target="GATEWAY_SECRET"
           Default=""
           Mode=""
-          Description="The secret made in isputnik.home under Control panel, Settings, Apps, Faces (Generate secret, then Copy), or a long random string of at least 32 characters (openssl rand -hex 32) also set on the isputnik container as FACES_GATEWAY_SECRET. Every request the home server sends carries it. Required: the server refuses to start without it, or with a short one."
+          Description="The secret isputnik.home signs its requests with, so this engine knows they come from it. Make it first, in isputnik.home on Control panel, Settings, Apps, Faces (Generate secret; it is shown once), and paste it here. Required: the engine refuses to start without one, or with one shorter than 32 characters. Everything else about face recognition is managed inside isputnik.home."
           Type="Variable"
           Display="always"
           Required="true"
@@ -73,7 +105,7 @@ This container has no sign-in, no web address and no data of its own: isputnik.h
           Target="PUID"
           Default="99"
           Mode=""
-          Description="User ID the server runs as. It runs unprivileged (not root) and writes nothing, so any user will do; 99 (nobody) matches the other isputnik containers."
+          Description="User ID the engine runs as. It runs unprivileged (not root) and writes nothing, so any user will do; 99 (nobody) matches the other isputnik containers."
           Type="Variable"
           Display="advanced"
           Required="false"
@@ -83,7 +115,7 @@ This container has no sign-in, no web address and no data of its own: isputnik.h
           Target="PGID"
           Default="100"
           Mode=""
-          Description="Group ID the server runs as."
+          Description="Group ID the engine runs as."
           Type="Variable"
           Display="advanced"
           Required="false"
@@ -93,7 +125,7 @@ This container has no sign-in, no web address and no data of its own: isputnik.h
           Target="LOG_LEVEL"
           Default="info"
           Mode=""
-          Description="trace, debug, info, warn, error, fatal or silent. The isputnik container shows this log under Control panel, Overview, Logs."
+          Description="trace, debug, info, warn, error, fatal or silent. isputnik.home shows this log under Control panel, Overview, Logs."
           Type="Variable"
           Display="advanced"
           Required="false"

@@ -1,9 +1,9 @@
 {
   "name": "isputnik-faces",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "stage": "alpha",
-  "description": "The face engine for isputnik.home: finds the faces in a photo and describes each one, behind the home server. Keeps nothing.",
+  "description": "Add-on for isputnik.home: the face recognition engine that finds and describes the faces in its photos. Requires the isputnik.home container; installed beside it and reached through home's /faces gateway, it keeps no data of its own.",
   "license": "AGPL-3.0-only",
   "type": "module",
   "engines": {
@@ -15,6 +15,7 @@
     "start": "node dist/index.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
+    "changelog": "node scripts/changelog-md.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "fetch:face-model": "node scripts/fetch-face-model.mjs"

@@ -44,7 +44,10 @@ WORKDIR /app
 
 # Unraid draws the container's icon from this label when its saved template
 # has none, so a template edit or an update cannot leave the tile blank.
-LABEL net.unraid.docker.icon="https://raw.githubusercontent.com/isputnikdotnet/isputnik.faces/main/Assets/icon.png"
+# Shown as the package description on ghcr.io and Docker Hub; docker/metadata-action
+# sets the same label from the GitHub repository's About line, which carries the same words.
+LABEL org.opencontainers.image.description="Add-on for isputnik.home: the face recognition engine that finds and describes the faces in its photos. Requires the isputnik.home container; installed beside it and reached through home's /faces gateway, it keeps no data of its own."
+LABEL net.unraid.docker.icon="https://raw.githubusercontent.com/isputnikdotnet/isputnik.faces/main/Assets/brand/isputnik-faces-icon.png"
 
 # gosu drops the entrypoint from root to the runtime user (scripts/docker-entrypoint.sh).
 RUN apt-get update && apt-get install -y --no-install-recommends gosu \

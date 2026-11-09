@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!--
+  Unraid Community Applications repository profile - read by CA from the repo
+  root alongside isputnik-faces.xml. A DEPLOYMENT artifact, not source. DO NOT DELETE.
+-->
+<CommunityApplications>
+  <Profile>
+isputnik.faces is the face recognition engine for isputnik.home, the private self-hosted family media library: it finds the faces in the family's photos and describes each one, so isputnik.home can group them into people and name them. Everything stays on your server; the engine itself keeps nothing. It is an add-on container with no pages, no sign-in and no data of its own: install it beside the isputnik container, pair the two on isputnik.home's Settings, Apps page, and switch face recognition on per photo library there. Report problems and ask questions on GitHub issues.
+  </Profile>
+  <Icon>https://raw.githubusercontent.com/isputnikdotnet/isputnik.faces/main/Assets/brand/isputnik-faces-icon.png</Icon>
+  <WebPage>https://github.com/isputnikdotnet/isputnik.faces</WebPage>
+</CommunityApplications>
